@@ -387,6 +387,18 @@ class Spotify {
             throw new Error('Failed to retrieve current track.');
         }
     }
+
+    getLikedAlbums(amount) {
+        const limit = Math.min(amount, max);
+        try {
+            return this.makeSpotifyApiCall(() => this.spotifyApi.getMySavedAlbums({limit}));
+        }
+        catch (error) {
+            throw new Error('Failed to retrieve liked albums.');
+        }
+    }
+
+
 }
 
 module.exports = Spotify;
