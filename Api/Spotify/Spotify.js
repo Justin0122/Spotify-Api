@@ -358,7 +358,7 @@ class Spotify {
         }
     }
 
-    getTopTracksByArtist(artist_id, amount, country) {
+    getTopTracksByArtist(artist_id, amount, country = 'US') {
         const limit = Math.min(amount, max);
         try {
             return this.makeSpotifyApiCall(() => this.spotifyApi.getArtistTopTracks(artist_id, country));

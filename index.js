@@ -115,7 +115,7 @@ app.get('/logout', (req, res) => {
     if (req.query.secure_token) {
         spotifySession
             .getUser(req.query.secure_token)
-            .then(() => logoutExecute(spotifySession))
+            .then(() => logoutExecute(spotifySession, req.query.secure_token))
             .then((data) => {
                 res.send(data);
             })
@@ -348,6 +348,7 @@ app.get("/playlists/liked", verifyToken, (req, res) => {
         sendError(res);
     }
 });
+
 
 
 app.listen(port, () => {

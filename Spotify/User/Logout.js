@@ -1,7 +1,7 @@
 module.exports = {
 
-    async execute(spotifySession) {
-        spotifySession.logout('123').then(r => {
+    async execute(spotifySession, secure_token) {
+        spotifySession.logout(secure_token).then(r => {
             console.log('Logged out of Spotify.');
         });
     }
