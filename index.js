@@ -5,12 +5,13 @@ const { execute: recommendationsExecute } = require('./Spotify/Playlist/Recommen
 const { execute: playlistExecute } = require('./Spotify/Playlist/Playlist');
 const { execute: authorizeExecute } = require('./Spotify/User/Authorize');
 const { execute: logoutExecute } = require('./Spotify/User/Logout');
-const {verify} = require("jsonwebtoken");
+const {verify, sign} = require("jsonwebtoken");
 
 Dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
+const host = "api.justinjongstra.nl";
 
 const spotifySession = new SpotifySession(
     process.env.SPOTIFY_SECURE_TOKEN,
@@ -26,12 +27,8 @@ function sendError(res) {
 
 app.post("/user/generateToken", (req, res) => {
     let jwtSecretKey = process.env.JWT_SECRET_KEY;
-    let data = {
-        time: Date(),
-        userId: 12,
-    }
 
-    const token = sign(data, jwtSecretKey);
+    let token = sign({ spotifySecureToken: process.env.SPOTIFY_SECURE_TOKEN }, jwtSecretKey);
     res.send(token);
 });
 
@@ -152,6 +149,207 @@ app.get("/current", verifyToken, (req, res) => {
     }
 });
 
+app.get("/tracks/top", verifyToken, (req, res) => {
+    if (req.query.secure_token) {
+        spotifySession
+            .getUser(req.query.secure_token)
+            .then((user) => {
+                spotifySession
+                    .getTopTracks(req.query.amount || 5)
+                    .then((data) => {
+                        res.send(data);
+                    })
+                    .catch((error) => {
+                        res.send(error);
+                    });
+            })
+            .catch(() => {
+                sendError(res);
+            });
+    } else {
+        sendError(res);
+    }
+});
+
+app.get("/artists/top", verifyToken, (req, res) => {
+    if (req.query.secure_token) {
+        spotifySession
+            .getUser(req.query.secure_token)
+            .then((user) => {
+                spotifySession
+                    .getTopArtists(req.query.amount || 5)
+                    .then((data) => {
+                        res.send(data);
+                    })
+                    .catch((error) => {
+                        res.send(error);
+                    });
+            })
+            .catch(() => {
+                sendError(res);
+            });
+    } else {
+        sendError(res);
+    }
+});
+
+app.get("/tracks/liked", verifyToken, (req, res) => {
+    if (req.query.secure_token) {
+        spotifySession
+            .getUser(req.query.secure_token)
+            .then((user) => {
+                spotifySession
+                    .getLikedTracks(req.query.amount || 5)
+                    .then((data) => {
+                        res.send(data);
+                    })
+                    .catch((error) => {
+                        res.send(error);
+                    });
+            })
+            .catch(() => {
+                sendError(res);
+            });
+    } else {
+        sendError(res);
+    }
+});
+
+app.get("/tracks/recent", verifyToken, (req, res) => {
+    if (req.query.secure_token) {
+        spotifySession
+            .getUser(req.query.secure_token)
+            .then((user) => {
+                spotifySession
+                    .getRecentlyPlayed(req.query.amount || 5)
+                    .then((data) => {
+                        res.send(data);
+                    })
+                    .catch((error) => {
+                        res.send(error);
+                    });
+            })
+            .catch(() => {
+                sendError(res);
+            });
+    } else {
+        sendError(res);
+    }
+});
+
+app.get("/albums/new", verifyToken, (req, res) => {
+    if (req.query.secure_token) {
+        spotifySession
+            .getUser(req.query.secure_token)
+            .then((user) => {
+                spotifySession
+                    .getNewReleases(req.query.amount || 5, req.query.country || "US")
+                    .then((data) => {
+                        res.send(data);
+                    })
+                    .catch((error) => {
+                        res.send(error);
+                    });
+            })
+            .catch(() => {
+                sendError(res);
+            });
+    } else {
+        sendError(res);
+    }
+});
+
+app.get("/albums/liked", verifyToken, (req, res) => {
+    if (req.query.secure_token) {
+        spotifySession
+            .getUser(req.query.secure_token)
+            .then((user) => {
+                spotifySession
+                    .getLikedAlbums(req.query.amount || 5)
+                    .then((data) => {
+                        res.send(data);
+                    })
+                    .catch((error) => {
+                        res.send(error);
+                    });
+            }
+            )
+            .catch(() => {
+                sendError(res);
+            }
+            );
+    } else {
+        sendError(res);
+    }
+});
+
+app.get("/artists/liked", verifyToken, (req, res) => {
+    if (req.query.secure_token) {
+        spotifySession
+            .getUser(req.query.secure_token)
+            .then(() => {
+                spotifySession
+                    .getLikedArtists(req.query.amount || 5)
+                    .then((data) => {
+                        res.send(data);
+                    })
+                    .catch((error) => {
+                            res.send(error);
+                        });
+            })
+            .catch(() => {
+                sendError(res);
+            });
+    } else {
+        sendError(res);
+    }
+});
+
+app.get("/artists/top/tracks", verifyToken, (req, res) => {
+    if (req.query.secure_token && req.query.artist_id) {
+        spotifySession
+            .getUser(req.query.secure_token)
+            .then(() => {
+                spotifySession
+                    .getTopTracksByArtist(req.query.artist_id, req.query.amount || 5, req.query.country || "US")
+                    .then((data) => {
+                        res.send(data);
+                    })
+                    .catch((error) => {
+                            res.send(error);
+                        });
+            })
+            .catch(() => {
+                sendError(res);
+            });
+    } else {
+        sendError(res);
+    }
+});
+
+app.get("/playlists/liked", verifyToken, (req, res) => {
+    if (req.query.secure_token && req.query.user_id) {
+        spotifySession
+            .getUser(req.query.secure_token)
+            .then(() => {
+                spotifySession
+                    .getLikedPlaylists(req.query.amount || 5)
+                    .then((data) => {
+                        res.send(data);
+                    })
+                    .catch((error) => {
+                            res.send(error);
+                        });
+            })
+            .catch(() => {
+                sendError(res);
+            });
+    } else {
+        sendError(res);
+    }
+});
+
+
 app.listen(port, () => {
-    console.log(`Listening on port ${port}`);
+    console.log(`Server running at https://${host}:${port}/`);
 });
