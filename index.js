@@ -349,6 +349,28 @@ app.get("/playlists/liked", verifyToken, (req, res) => {
     }
 });
 
+app.get("/tracks/current", verifyToken, (req, res) => {
+    if (req.query.secure_token && req.query.user_id) {
+        spotifySession
+            .getUser(req.query.secure_token)
+            .then(() => {
+                spotifySession
+                    .getCurrentTrack()
+                    .then((data) => {
+                        res.send(data);
+                    })
+                    .catch((error) => {
+                            res.send(error);
+                        });
+            })
+            .catch(() => {
+                sendError(res);
+            });
+    } else {
+        sendError(res);
+    }
+});
+
 
 
 app.listen(port, () => {

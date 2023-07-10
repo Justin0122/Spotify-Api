@@ -378,6 +378,15 @@ class Spotify {
             throw new Error('Failed to retrieve liked playlists.');
         }
     }
+
+    getCurrentTrack() {
+        try {
+            return this.makeSpotifyApiCall(() => this.spotifyApi.getMyCurrentPlayingTrack());
+        }
+        catch (error) {
+            throw new Error('Failed to retrieve current track.');
+        }
+    }
 }
 
 module.exports = Spotify;
