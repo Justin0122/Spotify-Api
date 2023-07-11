@@ -124,30 +124,30 @@ class Spotify {
         }
     }
 
-    async getTopTracks(amount = max) {
+    async getTopTracks(amount = max, offset = 0) {
         const limit = Math.min(amount, max);
         try {
-            const topTracks = await this.makeSpotifyApiCall(() => this.spotifyApi.getMyTopTracks({ limit: limit }));
+            const topTracks = await this.makeSpotifyApiCall(() => this.spotifyApi.getMyTopTracks({ limit: limit, offset: offset }));
             return topTracks.body;
         } catch (error) {
             throw new Error('Failed to retrieve Spotify user.');
         }
     }
 
-    async getTopArtists(amount = max) {
+    async getTopArtists(amount = max, offset = 0) {
         const limit = Math.min(amount, max);
         try {
-            const topArtists = await this.makeSpotifyApiCall(() => this.spotifyApi.getMyTopArtists({ limit: limit }));
+            const topArtists = await this.makeSpotifyApiCall(() => this.spotifyApi.getMyTopArtists({ limit: limit, offset: offset }));
             return topArtists.body;
         } catch (error) {
             throw new Error('Failed to retrieve Spotify user.');
         }
     }
 
-    getLikedTracks(amount) {
+    getLikedTracks(amount, offset = 0) {
         const limit = Math.min(amount, max);
         try {
-            return this.makeSpotifyApiCall(() => this.spotifyApi.getMySavedTracks({ limit: limit }));
+            return this.makeSpotifyApiCall(() => this.spotifyApi.getMySavedTracks({ limit: limit, offset: offset }));
         } catch (error) {
             throw new Error('Failed to retrieve Spotify user.');
         }
@@ -211,9 +211,9 @@ class Spotify {
         return likedSongs;
     }
 
-    async getLikedSongs(total = max) {
+    async getLikedSongs(total = max, offset = 0) {
         try {
-            const likedSongs = await this.makeSpotifyApiCall(() => this.spotifyApi.getMySavedTracks({ limit: total }));
+            const likedSongs = await this.makeSpotifyApiCall(() => this.spotifyApi.getMySavedTracks({ limit: total, offset: offset }));
             return likedSongs.body;
         } catch (error) {
             throw new Error('Failed to retrieve liked songs.');
@@ -307,8 +307,8 @@ class Spotify {
         return playlistWithTracks.body;
     }
 
-    async getTopGenre(amount) {
-        const topArtists = await this.makeSpotifyApiCall(() => this.spotifyApi.getMyTopArtists({ limit: 5 }));
+    async getTopGenre(amount, offset) {
+        const topArtists = await this.makeSpotifyApiCall(() => this.spotifyApi.getMyTopArtists({ limit: amount, offset: offset }));
         const topArtistsGenres = topArtists.body.items.map((artist) => artist.genres);
         const topArtistsGenresFlat = [].concat.apply([], topArtistsGenres);
         const topArtistsGenresCount = topArtistsGenresFlat.reduce((acc, genre) => {
@@ -328,37 +328,37 @@ class Spotify {
         await fetch(url);
     }
 
-    getRecentlyPlayed(amount) {
+    getRecentlyPlayed(amount = max) {
         const limit = Math.min(amount, max);
         try {
-            return this.makeSpotifyApiCall(() => this.spotifyApi.getMyRecentlyPlayedTracks({ limit }));
+            return this.makeSpotifyApiCall(() => this.spotifyApi.getMyRecentlyPlayedTracks({ limit: limit }));
         }
         catch (error) {
             throw new Error('Failed to retrieve recently played songs.');
         }
     }
 
-    getNewReleases(amount, country = 'US') {
+    getNewReleases(amount = max, offset = 0, country = 'US') {
         const limit = Math.min(amount, max);
         try {
-            return this.makeSpotifyApiCall(() => this.spotifyApi.getNewReleases({limit, country: country}));
+            return this.makeSpotifyApiCall(() => this.spotifyApi.getNewReleases({ limit: limit, offset: offset, country: country }));
         }
         catch (error) {
             throw new Error('Failed to retrieve new releases.');
         }
     }
 
-    getLikedArtists(amount) {
+    getLikedArtists(amount = max) {
         const limit = Math.min(amount, max);
         try {
-            return this.makeSpotifyApiCall(() => this.spotifyApi.getFollowedArtists({limit}));
+            return this.makeSpotifyApiCall(() => this.spotifyApi.getFollowedArtists({limit: limit}));
         }
         catch (error) {
             throw new Error('Failed to retrieve liked artists.');
         }
     }
 
-    getTopTracksByArtist(artist_id, amount, country = 'US') {
+    getTopTracksByArtist(artist_id, amount, offset, country = 'US') {
         const limit = Math.min(amount, max);
         try {
             return this.makeSpotifyApiCall(() => this.spotifyApi.getArtistTopTracks(artist_id, country));
@@ -369,7 +369,7 @@ class Spotify {
 
     }
 
-    getLikedPlaylists(amount, userId) {
+    getLikedPlaylists(amount= max, userId) {
         const limit = Math.min(amount, max);
         try {
             return this.makeSpotifyApiCall(() => this.spotifyApi.getUserPlaylists(userId, {limit}));
@@ -388,10 +388,10 @@ class Spotify {
         }
     }
 
-    getLikedAlbums(amount) {
+    getLikedAlbums(amount, offset = 0) {
         const limit = Math.min(amount, max);
         try {
-            return this.makeSpotifyApiCall(() => this.spotifyApi.getMySavedAlbums({limit}));
+            return this.makeSpotifyApiCall(() => this.spotifyApi.getMySavedAlbums({limit: limit, offset: offset}));
         }
         catch (error) {
             throw new Error('Failed to retrieve liked albums.');

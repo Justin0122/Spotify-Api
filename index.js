@@ -21,6 +21,7 @@ const spotifySession = new SpotifySession(
     process.env.SPOTIFY_CLIENT_SECRET
 );
 
+
 function sendError(res) {
     res.send({ error: 'Invalid access token or refresh token.' });
 }
@@ -155,7 +156,7 @@ app.get("/tracks/top", verifyToken, (req, res) => {
             .getUser(req.query.secure_token)
             .then((user) => {
                 spotifySession
-                    .getTopTracks(req.query.amount || 5)
+                    .getTopTracks(req.query.amount || 5, req.query.offset || 0)
                     .then((data) => {
                         res.send(data);
                     })
@@ -177,7 +178,7 @@ app.get("/artists/top", verifyToken, (req, res) => {
             .getUser(req.query.secure_token)
             .then((user) => {
                 spotifySession
-                    .getTopArtists(req.query.amount || 5)
+                    .getTopArtists(req.query.amount || 5, req.query.offset || 0)
                     .then((data) => {
                         res.send(data);
                     })
@@ -199,7 +200,7 @@ app.get("/tracks/liked", verifyToken, (req, res) => {
             .getUser(req.query.secure_token)
             .then((user) => {
                 spotifySession
-                    .getLikedTracks(req.query.amount || 5)
+                    .getLikedTracks(req.query.amount || 5, req.query.offset || 0)
                     .then((data) => {
                         res.send(data);
                     })
@@ -243,7 +244,7 @@ app.get("/albums/new", verifyToken, (req, res) => {
             .getUser(req.query.secure_token)
             .then((user) => {
                 spotifySession
-                    .getNewReleases(req.query.amount || 5, req.query.country || "US")
+                    .getNewReleases(req.query.amount || 5, req.query.offset || 0, req.query.country || "US")
                     .then((data) => {
                         res.send(data);
                     })
@@ -265,7 +266,7 @@ app.get("/albums/liked", verifyToken, (req, res) => {
             .getUser(req.query.secure_token)
             .then((user) => {
                 spotifySession
-                    .getLikedAlbums(req.query.amount || 5)
+                    .getLikedAlbums(req.query.amount || 5, req.query.offset || 0)
                     .then((data) => {
                         res.send(data);
                     })
@@ -289,7 +290,7 @@ app.get("/artists/liked", verifyToken, (req, res) => {
             .getUser(req.query.secure_token)
             .then(() => {
                 spotifySession
-                    .getLikedArtists(req.query.amount || 5)
+                    .getLikedArtists(req.query.amount || 5, req.query.offset || 0)
                     .then((data) => {
                         res.send(data);
                     })
@@ -311,7 +312,7 @@ app.get("/artists/top/tracks", verifyToken, (req, res) => {
             .getUser(req.query.secure_token)
             .then(() => {
                 spotifySession
-                    .getTopTracksByArtist(req.query.artist_id, req.query.amount || 5, req.query.country || "US")
+                    .getTopTracksByArtist(req.query.artist_id, req.query.amount || 5, req.query.offset || 0, req.query.country || "US")
                     .then((data) => {
                         res.send(data);
                     })
@@ -333,7 +334,7 @@ app.get("/playlists/liked", verifyToken, (req, res) => {
             .getUser(req.query.secure_token)
             .then(() => {
                 spotifySession
-                    .getLikedPlaylists(req.query.amount || 5)
+                    .getLikedPlaylists(req.query.amount || 5, req.query.secure_token)
                     .then((data) => {
                         res.send(data);
                     })
